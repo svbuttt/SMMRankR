@@ -2,15 +2,15 @@
 % Please edit documentation in R/smm_bubble_plot.R
 \name{smm_bubble_plot}
 \alias{smm_bubble_plot}
-\title{Wykres bubble dla wyników MCDA}
+\title{Wykres bubble dla wynikow MCDA}
 \usage{
 smm_bubble_plot(scores, weights)
 }
 \arguments{
-\item{scores}{data.frame lub macierz z ocenami kryteriów}
+\item{scores}{data.frame lub macierz z ocenami kryteriow}
 
-\item{weights}{wektor wag kryteriów}
+\item{weights}{wektor wag kryteriow}
 }
 \description{
-Wykres bubble dla wyników MCDA
+Wykres bubble dla wynikow MCDA
 }

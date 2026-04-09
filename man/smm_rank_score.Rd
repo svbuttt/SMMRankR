@@ -2,18 +2,18 @@
 % Please edit documentation in R/smm_mcdm_rank.R
 \name{smm_rank_score}
 \alias{smm_rank_score}
-\title{Rankowanie platform i typów treści w mediach społecznościowych}
+\title{Ranking platform spolecznosciowych metoda MCDA}
 \usage{
 smm_rank_score(scores, weights)
 }
 \arguments{
-\item{scores}{data.frame lub macierz z ocenami kryteriów}
+\item{scores}{Macierz lub data.frame z ocenami alternatyw (wiersze to platformy, kolumny to kryteria)}
 
-\item{weights}{wektor wag kryteriów}
+\item{weights}{Wektor wag dla kryteriow (suma wag powinna wynosic 1)}
 }
 \value{
-data.frame z wynikami rankingu
+Data.frame z wynikami rankingu i punktacja
 }
 \description{
-Rankowanie platform i typów treści w mediach społecznościowych
+Ranking platform spolecznosciowych metoda MCDA
 }
