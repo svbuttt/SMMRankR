@@ -1,18 +1,31 @@
 Package: SMMRankR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Wielokryterialne Wspomaganie Decyzji w Wyborze Platform SMM
 Version: 0.1.0
 Authors@R: c(
     person(
-      "Jane", "Doe",
-      email = "jane@example.com",
+      "Sofiia", 
+      email = "svbuttt@gmail.com",
       role = c("aut", "cre")
     )
   )
-Description: More about what it does (maybe more than one line).
-    Continuation lines should be indented.
+Description: Pakiet SMMRankR implementuje metody wielokryterialnego wspomagania 
+    decyzji (MCDA), takie jak TOPSIS oraz Best-Worst Method (BWM). 
+    Narzędzie jest przeznaczone do obiektywnego rankingu platform 
+    społecznościowych (TikTok, Instagram, YouTube) na podstawie 
+    wskaźników zasięgu, zaangażowania i kosztów.
 License: MIT + file LICENSE
-Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.3
-
+Encoding: UTF-8
+Imports: 
+    graphics,
+    stats
+Depends: 
+    R (>= 3.5)
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr

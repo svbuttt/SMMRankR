@@ -1,16 +1,24 @@
 # SMMRankR
 
-Pakiet R do wspomagania wyboru platform i strategii content marketingu w mediach społecznościowych.
+Pakiet SMMRankR służy do wielokryterialnego wspomagania decyzji (MCDA) w obszarze marketingu w mediach społecznościowych. Pozwala na obiektywne porównanie platform takich jak TikTok, Instagram czy YouTube.
 
-## Funkcje
+## O projekcie
+Projekt implementuje dwie kluczowe metody matematyczne:
+* Best-Worst Method (BWM) – do wyznaczania wag kryteriów.
+* TOPSIS – do tworzenia końcowego rankingu platform.
 
-- smm_rank_score(scores, weights) — rankowanie platform i typów treści
-- smm_bubble_plot(scores, weights) — wizualizacja wyników w postaci wykresu bubble
+## Funkcje pakietu
+* stworz_macierz_smm() – generuje dane do analizy.
+* oblicz_wagi_smm_bwm() – oblicza ważność kryteriów.
+* oblicz_topsis_smm() – tworzy ranking końcowy.
+* rysuj_ranking_smm() – generuje wykres bąbelkowy (mapę strategiczną).
 
 ## Przykład użycia
+library(SMMRankR)
+dane <- stworz_macierz_smm()
+wagi <- oblicz_wagi_smm_bwm(1, 3, 3)
+wynik <- oblicz_topsis_smm(dane, wagi)
+rysuj_ranking_smm(dane, wynik)
 
-```r
-library(devtools)
-load_all()
-smm_rank_score(scores, weights)
-smm_bubble_plot(scores, weights)
+## Autor
+Sofiia But

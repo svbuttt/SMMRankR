@@ -1,0 +1,16 @@
+---
+title: "Analiza platform SMM z użyciem pakietu SMMRankR"
+author: "Sofiia But"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Analiza platform SMM z użyciem pakietu SMMRankR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
