@@ -279,7 +279,6 @@ oblicz_waspas_smm <- function(tablica_wynikow, wagi_smm, kierunki = NULL, lambda
 #' @param v Parametr dla VIKOR (domyślnie 0.5).
 #' @param lambda Parametr dla WASPAS (domyślnie 0.5).
 #' @return Obiekt klasy \code{meta_smm_wynik} zawierający tabelę porównawczą i macierz korelacji.
-#' @importFrom RankAggreg BruteAggreg
 #' @export
 oblicz_meta_ranking_smm <- function(tablica_wynikow, wagi_smm, kierunki = NULL, v = 0.5, lambda = 0.5) {
   if (!is.matrix(tablica_wynikow)) {
@@ -310,17 +309,22 @@ oblicz_meta_ranking_smm <- function(tablica_wynikow, wagi_smm, kierunki = NULL, 
   # 2. Agregacja Dominacją (Głosowanie większościowe)
   ranking_dominacja <- .oblicz_dominacje_smm(r_topsis, r_vikor, r_waspas)
   
-  # 3. Konsensus RankAggreg (Algorytm Genetyczny lub Brute Force)
-  macierz_dla_ra <- rbind(order(r_topsis), order(r_vikor), order(r_waspas))
-  
-  # BruteAggreg dla małej liczby alternatyw (<= 10) jest bardzo szybki i dokładny
-  ra_wynik <- RankAggreg::BruteAggreg(macierz_dla_ra, ile_alts, distance = "Spearman")
-  top_lista <- ra_wynik$top.list
-  
-  ranking_consensus <- numeric(ile_alts)
-  for (pozycja in 1:ile_alts) {
-    indeks_alternatywy <- as.numeric(top_lista[pozycja])
-    ranking_consensus[indeks_alternatywy] <- pozycja
+  # 3. Konsensus RankAggreg (Algorytm Genetyczny lub Brute Force) z czystym R fallbackiem
+  if (requireNamespace("RankAggreg", quietly = TRUE)) {
+    macierz_dla_ra <- rbind(order(r_topsis), order(r_vikor), order(r_waspas))
+    ra_wynik <- RankAggreg::BruteAggreg(macierz_dla_ra, ile_alts, distance = "Spearman")
+    top_lista <- ra_wynik$top.list
+    
+    ranking_consensus <- numeric(ile_alts)
+    for (pozycja in 1:ile_alts) {
+      indeks_alternatywy <- as.numeric(top_lista[pozycja])
+      ranking_consensus[indeks_alternatywy] <- pozycja
+    }
+  } else {
+    # Fallback w czystym R dla srodowisk bez RankAggreg (np. WebAssembly)
+    ra_fallback <- .agreguj_rangi_brute_smm(r_topsis, r_vikor, r_waspas)
+    ranking_consensus <- ra_fallback$ranking_consensus
+    top_lista <- ra_fallback$top_list
   }
   
   # Zestawienie porównawcze
@@ -351,4 +355,35 @@ oblicz_meta_ranking_smm <- function(tablica_wynikow, wagi_smm, kierunki = NULL, 
   
   class(wynik) <- c("meta_smm_wynik", "list")
   return(wynik)
+}
+
+.agreguj_rangi_brute_smm <- function(r_topsis, r_vikor, r_waspas) {
+  n <- length(r_topsis)
+  
+  # Generator permutacji w czystym R
+  generuj_perms <- function(k) {
+    if (k == 1) return(matrix(1))
+    perms_prev <- generuj_perms(k - 1)
+    n_prev <- nrow(perms_prev)
+    perms <- matrix(0, nrow = n_prev * k, ncol = k)
+    for (i in 1:k) {
+      perms[((i - 1) * n_prev + 1):(i * n_prev), ] <- cbind(i, perms_prev + (perms_prev >= i))
+    }
+    return(perms)
+  }
+  
+  perms <- generuj_perms(n)
+  
+  # Obliczenie sumy kwadratow roznic Spearmana
+  scores <- rowSums(sweep(perms, 2, r_topsis, "-")^2) +
+            rowSums(sweep(perms, 2, r_vikor, "-")^2) +
+            rowSums(sweep(perms, 2, r_waspas, "-")^2)
+  
+  best_idx <- which.min(scores)
+  best_R <- perms[best_idx, ]
+  
+  return(list(
+    ranking_consensus = best_R,
+    top_list = order(best_R)
+  ))
 }

@@ -3,9 +3,42 @@
 library(shiny)
 library(ggplot2)
 library(ggrepel)
-library(flextable)
-library(rempsyc)
-library(RankAggreg)
+
+# Czyste R / WebAssembly - sprawdzamy obecnosc opcjonalnych pakietow
+apa_html_dostepny <- requireNamespace("flextable", quietly = TRUE) && requireNamespace("rempsyc", quietly = TRUE)
+
+if (apa_html_dostepny) {
+  library(flextable)
+  library(rempsyc)
+}
+
+# Sprawdzamy, czy SMMRankR jest zaladowany.
+# W srodowisku Shinylive pliki R zostana wgrane obok app.R.
+if (requireNamespace("SMMRankR", quietly = TRUE)) {
+  library(SMMRankR)
+  data("smm_dane_surowe", package = "SMMRankR", envir = environment())
+} else {
+  # Srodowisko WebAssembly/shinylive lub lokalny dev bez zainstalowanego pakietu
+  # Najpierw szukamy w biezacym katalogu (dla Shinylive)
+  r_files <- list.files(".", pattern = "\\.[Rr]$", full.names = TRUE)
+  r_files <- r_files[basename(r_files) != "app.R"]
+  
+  # Jesli nie znaleziono, szukamy w ../../R (lokalny dev)
+  if (length(r_files) == 0) {
+    r_files <- list.files("../../R", full.names = TRUE, pattern = "\\.[Rr]$")
+  }
+  
+  for (f in r_files) {
+    source(f)
+  }
+  
+  # Wczytujemy dane demonstracyjne
+  if (file.exists("smm_dane_surowe.rds")) {
+    smm_dane_surowe <- readRDS("smm_dane_surowe.rds")
+  } else if (file.exists("../../data/smm_dane_surowe.rda")) {
+    load("../../data/smm_dane_surowe.rda")
+  }
+}
 
 # Lokalny parser do skladni lavaan w Shiny
 analizuj_skladnia_smm_local <- function(skladnia) {
@@ -25,18 +58,6 @@ analizuj_skladnia_smm_local <- function(skladnia) {
   return(struktura_kryteriow)
 }
 
-# Upewniamy się, że funkcje pakietu są dostępne (gdy uruchamiane poza zainstalowanym pakietem)
-# W normalnych warunkach package:SMMRankR jest załadowany.
-if (!exists("zbuduj_macierz_decyzyjna", mode = "function")) {
-  # Wyszukujemy pliki w katalogu R w celu załadowania (dla dewelopmentu lokalnego)
-  r_files <- list.files("../../R", full.names = TRUE, pattern = "\\.[Rr]$")
-  if (length(r_files) > 0) {
-    for (f in r_files) source(f)
-  }
-}
-
-# --- UNIWERSALNE DANE DOMYŚLNE -----------------------------------------------
-data("smm_dane_surowe", package = "SMMRankR", envir = environment())
 if (!exists("smm_dane_surowe")) {
   # Fallback na wypadek gdyby zbiór nie był wczytany
   smm_dane_surowe <- data.frame(
@@ -503,15 +524,16 @@ server <- function(input, output, session) {
     res <- obliczenia_wynik()
     req(res)
     
-    # Generujemy flextable za pomocą tabeli APA z pakietu
-    ft <- tabela_apa(res$mcda)
-    
-    # Nadajemy podstawowe formatowanie dla czcionki, aby pasowało do Shiny
-    ft <- flextable::font(ft, fontname = "Plus Jakarta Sans", part = "all")
-    ft <- flextable::fontsize(ft, size = 10, part = "all")
-    ft <- flextable::autofit(ft)
-    
-    flextable::htmltools_value(ft)
+    if (apa_html_dostepny) {
+      ft <- tabela_apa(res$mcda)
+      ft <- flextable::font(ft, fontname = "Plus Jakarta Sans", part = "all")
+      ft <- flextable::fontsize(ft, size = 10, part = "all")
+      ft <- flextable::autofit(ft)
+      flextable::htmltools_value(ft)
+    } else {
+      # Fallback na czysty HTML (standardowe tagi htmltools)
+      tabela_apa_html(res$mcda)
+    }
   })
   
   # --- WYRENDEROWANIE WYKRESU RANKINGU ---------------------------------------

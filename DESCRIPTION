@@ -21,18 +21,19 @@ LazyData: true
 RoxygenNote: 7.3.3
 Encoding: UTF-8
 Imports: 
-    flextable,
     ggplot2,
     ggrepel,
     graphics,
-    RankAggreg,
-    rempsyc,
+    htmltools,
     shiny,
     stats
 Depends: 
     R (>= 3.5)
 Suggests: 
+    flextable,
     knitr,
+    RankAggreg,
+    rempsyc,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
