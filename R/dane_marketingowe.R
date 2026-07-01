@@ -14,7 +14,7 @@ stworz_macierz_smm <- function() {
   ), nrow = 3, byrow = TRUE)
 
   # Nazwy kryteriów i alternatyw zgodne z tematyką SMM
-  colnames(dane_wartosci) <- c("Zasięg", "Zaangażowanie", "Koszt")
+  colnames(dane_wartosci) <- c("Zasieg", "Zaangazowanie", "Koszt")
   rownames(dane_wartosci) <- c("TikTok", "Instagram", "YouTube")
 
   # Nadanie klasy S3, aby obiekt był rozpoznawalny w pakiecie [cite: 184]

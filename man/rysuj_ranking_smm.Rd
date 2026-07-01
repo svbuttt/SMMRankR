@@ -2,15 +2,16 @@
 % Please edit documentation in R/wizualizacja_rankingu.R
 \name{rysuj_ranking_smm}
 \alias{rysuj_ranking_smm}
-\title{Wykres bąbelkowy wyników rankingu SMM}
+\title{Rysowanie rankingu SMM (funkcja kompatybilnosci)}
 \usage{
 rysuj_ranking_smm(macierz_danych, wyniki_rankingu)
 }
 \arguments{
-\item{macierz_danych}{Macierz z danymi marketingowymi.}
+\item{macierz_danych}{Macierz z danymi.}
 
-\item{wyniki_rankingu}{Wyniki obliczone funkcją oblicz_topsis_smm.}
+\item{wyniki_rankingu}{Wyniki rankingu (np. z TOPSIS).}
 }
 \description{
-Tworzy mapę strategiczną platform społecznościowych na podstawie wyników MCDA.
+Tradycyjny rysunek zachowany dla kompatybilnosci wstecznej, wykorzystujacy
+nowa logike graficzna ggplot2.
 }

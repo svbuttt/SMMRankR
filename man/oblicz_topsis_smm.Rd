@@ -2,18 +2,20 @@
 % Please edit documentation in R/algorytm_mcda.R
 \name{oblicz_topsis_smm}
 \alias{oblicz_topsis_smm}
-\title{Ranking platform SMM metodą TOPSIS}
+\title{Ranking SMM metodą TOPSIS}
 \usage{
-oblicz_topsis_smm(tablica_wynikow, wagi_smm)
+oblicz_topsis_smm(tablica_wynikow, wagi_smm, kierunki = NULL)
 }
 \arguments{
-\item{tablica_wynikow}{Macierz danych (np. TikTok, Instagram) wygenerowana funkcją stworz_macierz_smm.}
+\item{tablica_wynikow}{Macierz danych (alternatywy x kryteria) np. z funkcji zbuduj_macierz_decyzyjna.}
 
-\item{wagi_smm}{Wektor wag kryteriów obliczony metodą BWM.}
+\item{wagi_smm}{Wektor wag kryteriów sumujący się do 1.}
+
+\item{kierunki}{Wektor znakowy określający kierunki kryteriów ("max" dla zysku, "min" dla kosztu). Domyślnie "max".}
 }
 \value{
-ranking_koncowy Ramka danych z pozycjami w rankingu.
+Obiekt klasy \code{topsis_smm_wynik} zawierający tabelę rankingu oraz parametry.
 }
 \description{
-Funkcja wykonuje pełną procedurę rankingu TOPSIS dla wybranych platform społecznościowych.
+Funkcja wykonuje pełną procedurę rankingu TOPSIS dla danych ostrych (crisp).
 }
