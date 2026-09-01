@@ -4,8 +4,19 @@ library(shiny)
 library(ggplot2)
 library(ggrepel)
 
-# Czyste R / WebAssembly - sprawdzamy obecnosc opcjonalnych pakietow
-apa_html_dostepny <- requireNamespace("flextable", quietly = TRUE) && requireNamespace("rempsyc", quietly = TRUE)
+# Czyste R / WebAssembly - sprawdzamy obecnosc opcjonalnych pakietow.
+#
+# UWAGA (Shinylive/webR): requireNamespace() jest tam podmienione na wersje, ktora
+# probuje doinstalowac brakujacy pakiet przez webr::install(). Gdy pakietu nie ma
+# w repozytorium webR (np. SMMRankR, ktory nigdy tam nie trafi), shim zwraca wartosc
+# o dlugosci zero, wiec `if (...)` przerywa start bledem "argument is of length zero"
+# i aplikacja w ogole sie nie uruchamia. system.file() nie jest podmieniane,
+# wiec uzywamy go jako bezpiecznego testu obecnosci pakietu.
+pakiet_dostepny <- function(nazwa) {
+  isTRUE(nzchar(system.file(package = nazwa)))
+}
+
+apa_html_dostepny <- pakiet_dostepny("flextable") && pakiet_dostepny("rempsyc")
 
 if (apa_html_dostepny) {
   library(flextable)
@@ -14,7 +25,7 @@ if (apa_html_dostepny) {
 
 # Sprawdzamy, czy SMMRankR jest zaladowany.
 # W srodowisku Shinylive pliki R zostana wgrane obok app.R.
-if (requireNamespace("SMMRankR", quietly = TRUE)) {
+if (pakiet_dostepny("SMMRankR")) {
   library(SMMRankR)
   data("smm_dane_surowe", package = "SMMRankR", envir = environment())
 } else {
