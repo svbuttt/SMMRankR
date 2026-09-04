@@ -3,3 +3,7 @@
 ^data-raw$
 ^doc$
 ^Meta$
+^promotor_docs$
+^tools$
+^docs$
+^index\.html$
